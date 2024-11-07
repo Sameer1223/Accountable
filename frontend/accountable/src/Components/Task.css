@@ -1,0 +1,22 @@
+.task {
+    display:flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-name {
+    display: flex;
+    align-items: center;
+    width: 150px;
+    margin-right: 20px;
+}
+
+.edit-btn, .delete-btn{
+    display: flex;
+    width: 20px;
+    height: 20px;
+    border-radius: 7px;
+    background-color: azure;
+    align-items: center;
+    justify-content: center;
+}

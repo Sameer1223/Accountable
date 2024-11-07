@@ -21,17 +21,14 @@ function AddTaskPage() {
             axios.get(`/tasks/${taskId}`)
             .then(response => {
                 let task = response.data.task;
-                console.log(parseInt(task.days[3]));
                 let days = Array(7).fill(false);
-                console.log(task);
-                for (let i = 0; task.days.length; i++){
-                    //days[parseInt(task.days[i])] = true;
-                    console.log(task.days[i]);
+                for (let i = 0; i < task.days.length; i++){
+                    days[parseInt(task.days[i])] = true;
                 }
-                console.log("days" + days);
+
                 setName(task.name);
                 setFrequency(task.frequency);
-                //setActiveDay(task.d);
+                setActiveDay(days);
                 setShared(task.shared);
             })
             .catch(error => {

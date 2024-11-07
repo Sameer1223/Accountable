@@ -43,7 +43,7 @@ function Task(props) {
         <div className="task">
             <label className="task-name"><input type="checkbox" checked={task.complete} onChange={() => completeTask(task.id)}/>{task.name}</label>
             <p>{task.streaks}</p>
-            <button className='edit-btn' onClick={handleEdit(task.id)}>=</button>
+            <button className='edit-btn' onClick={() => handleEdit(task.id)}>=</button>
             <button className="delete-btn" onClick={() => handleDelete(task.id)}>x</button>
         </div>
     );

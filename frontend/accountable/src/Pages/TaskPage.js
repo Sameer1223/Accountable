@@ -15,8 +15,30 @@ function TaskPage() {
     };
 
     const getTasks = async () => {
-        //@TODO: Change back to /tasks-today
-        axios.get('/tasks-today')
+
+        // Set last checked time for user
+        axios.patch(`/users/${1}`)
+        .then(response => {
+            let last_checked = response.data.user.last_checked;
+            const today = new Date();
+            let pythonEquivalent = (today.getDay() + 6) % 7;
+            console.log(last_checked, pythonEquivalent);
+            if (last_checked !== pythonEquivalent) {
+                console.log("we are resetting");
+                axios.patch(`/update-streaks/${1}`)
+                .then(response => {
+                    console.log('Reset');
+                })
+                .catch(error => {
+                    console.error('There was an error fetching the data:', error);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('There was an error fetching the data:', error);
+        });
+            
+        axios.get(`/tasks-today/${1}`)
         .then(response => {
             setTasks(response.data.tasks);
         })

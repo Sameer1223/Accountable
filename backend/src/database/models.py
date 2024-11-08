@@ -41,6 +41,32 @@ class Group(db.Model):
     def update(self):
         db.session.commit()
 
+class User(db.Model):
+    __tablename__ = 'User'
+    
+    user_id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
+    #auth_id = Column(String(80), nullable=False)
+    name = Column(String(80), nullable=False)
+    last_checked = Column(Integer)
+
+    def long(self):
+        return {
+            'user_id': self.user_id,
+            'name': self.name,
+            'last_checked': self.last_checked
+        }
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
 
 class Task(db.Model):
     # Autoincrementing, unique primary key
@@ -53,6 +79,7 @@ class Task(db.Model):
     streaks = Column(Integer, nullable=False, default=0)
     shared = Column(Boolean, nullable=False, default=False)
     group_id = Column(Integer, db.ForeignKey('Group.g_id'))
+    user_id = Column(Integer, db.ForeignKey('User.user_id'))
     
     # Relationship
     #group = db.relationship("Group", backref="tasks", lazy=True)
@@ -63,7 +90,8 @@ class Task(db.Model):
             'id': self.id,
             'name': self.name,
             'complete': self.complete,
-            'streaks': self.streaks
+            'streaks': self.streaks,
+            'user_id': self.user_id
         }
 
     # Long form representation?
@@ -77,7 +105,8 @@ class Task(db.Model):
             'category': self.category,
             'streaks': self.streaks,
             'shared': self.shared,
-            'group_id': self.group_id
+            'group_id': self.group_id,
+            'user_id': self.user_id
         }
 
     def insert(self):

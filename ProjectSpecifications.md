@@ -44,10 +44,11 @@
 3. Progress component
 4. Progress bar
 5. ~~Categories based on daily, weekly, important? Might not be needed because tasks only show on days~~
-
 6. Edit option for tasks
-7. Reset streaks if missed
-8. Sharing task endpoints and friend streak system 
-9. User login page
-10. User authentication
-11. User auth
+
+7. Reset streaks if missed -> last checked, then for all past days missed reset tasks to incomplete and set streaks to 0 if not completed
+8. Individual and Group tab section
+9. CRUD for groups
+10. User login page
+11. User authentication
+12. User auth

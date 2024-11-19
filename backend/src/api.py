@@ -43,6 +43,16 @@ def users():
         'users': formatted_users
         }), 200
 
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user_by_id(user_id):
+    try:
+        user = User.query.filter(User.user_id==user_id).one_or_none()
+        return jsonify({
+            'success': True,
+            'user': user.long()
+            }), 200
+    except:
+        abort(422)
 
 @app.route('/users', methods=['POST'])
 def insert_user():
@@ -68,7 +78,7 @@ def update_user(user_id):
         user = User.query.filter(User.user_id==user_id).one_or_none()
 
         if user == None:
-                abort(404)
+            abort(404)
 
         now = datetime.datetime.now()
         day_of_the_week = now.weekday()
@@ -83,6 +93,53 @@ def update_user(user_id):
     except:
         abort(422)
 
+# ========================
+# User groups
+# ========================  
+
+@app.route('/users/<int:user_id>/groups/<int:group_id>', methods=['PATCH'])
+def add_user_group(user_id, group_id):
+    try:
+        user = User.query.filter(User.user_id==user_id).one_or_none()
+
+        past = ""
+        if user.groups is not None:
+            past = user.groups + ","
+        
+        user.groups = past + str(group_id)
+        user.update()
+
+        group = Group.query.filter(Group.g_id==group_id).one_or_none()
+        group.number_of_members += 1
+        group.update()
+
+        return jsonify({
+            'success': True,
+            'user': user.long()
+            }), 200
+    except:
+        abort(422)
+
+@app.route('/users/<int:user_id>/groups/<int:group_id>', methods=['DELETE'])
+def delete_user_group(user_id, group_id):
+    try:
+        user = User.query.filter(User.user_id==user_id).one_or_none()
+
+        groups = user.groups.split(',')
+        groups.remove(str(group_id))
+        user.groups = groups.join(',')
+        user.update()
+
+        group = Group.query.filter(Group.g_id==group_id).one_or_none()
+        group.number_of_members -= 1
+        group.update()
+
+        return jsonify({
+            'success': True,
+            'user': user.long()
+            }), 200
+    except:
+        abort(422)
 # ========================
 # Tasks
 # ========================
@@ -113,8 +170,10 @@ def tasks_today(user_id):
     now = datetime.datetime.now()
     day_of_the_week = now.weekday()
 
-    tasks = Task.query.filter(Task.user_id == user_id, Task.days.contains(day_of_the_week)).all()
-    formatted_tasks = [task.short() for task in tasks]
+    group_id = request.args.get('group_id', 0)
+
+    tasks = Task.query.filter(Task.user_id == user_id, Task.group_id == group_id, Task.days.contains(day_of_the_week)).all()
+    formatted_tasks = [task.long() for task in tasks]
     return jsonify({
         'success:': True,
         'tasks': formatted_tasks
@@ -130,6 +189,7 @@ def create_task():
     category = body.get('category', 'Daily')
     shared = body.get('shared', False)
     user_id = body.get('user_id')
+    group_id = body.get('group_id', 0)
 
     if not name or not user_id:
         abort(400)
@@ -143,7 +203,8 @@ def create_task():
             category=category,
             streaks=0,
             shared=shared,
-            user_id=user_id
+            user_id=user_id,
+            group_id=group_id
             )
         task.insert()
         return jsonify({
@@ -172,7 +233,6 @@ def update_streaks(user_id):
             day = (lc + i) % 7
             # Get all previous days tasks
             tasks = Task.query.filter(Task.user_id == user_id, Task.days.contains(str(day))).all()
-
             # For all tasks, if complete set to incomplete, if not set streaks to 0
             for task in tasks:
                 if not task.complete:
@@ -202,6 +262,8 @@ def update_task(id):
         task.category = body.get('category', task.category)
         task.streaks = body.get('streaks', task.streaks)
         task.shared = body.get('shared', task.shared)
+        task.group_id = body.get('group_id', task.group_id)
+        task.number_completed = body.get('number_completed', task.number_completed)
 
         task.update()
         return jsonify({
@@ -225,11 +287,51 @@ def delete_task(id):
     except:
         abort(422)
 
-# Error Handling
-'''
-Example error handling for unprocessable entity
-'''
+# ========================
+# Groups
+# ========================
+# For debugging
+@app.route('/groups', methods=['GET'])
+def groups():
+    # Retrieve all groups
+    groups = Group.query.all()
+    formatted_groups = [group.long() for group in groups]
+    return jsonify({
+        'success:': True,
+        'groups': formatted_groups
+        }), 200
 
+@app.route('/groups/<int:g_id>', methods=['GET'])
+def group_by_id(g_id):
+    # Retrieve group by id
+    group = Group.query.filter(Group.g_id==g_id).one_or_none()
+    if group is None:
+        abort(404)
+    return jsonify({
+        'success:': True,
+        'group': group.long()
+        }), 200
+
+@app.route('/groups', methods=['POST'])
+def insert_group():
+    body = request.get_json()
+    name = body.get('name')
+    if not name:
+        abort(400)
+    
+    try:
+        group = Group(g_name=name)
+        group.insert()
+        return jsonify({
+            'success': True,
+            'group': group.long()
+        }), 200
+    except:
+        abort(422)
+
+# ========================
+# ERROR HANDLING
+# ========================
 
 @app.errorhandler(422)
 def unprocessable(error):

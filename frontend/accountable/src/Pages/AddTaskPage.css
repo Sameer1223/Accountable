@@ -1,3 +1,11 @@
 .active {
     background-color: aquamarine;
 }
+
+.task-form {
+    display: flex;
+}
+
+.submit {
+    margin-left: 10px;
+}

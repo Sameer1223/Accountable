@@ -26,9 +26,17 @@ class Group(db.Model):
     # Autoincrementing, unique primary key
     g_id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     g_name = Column(String(80), nullable=False)
+    number_of_members = Column(Integer(), default=0)
 
     # Relationship
     tasks = db.relationship("Task", backref="group", lazy=True)
+
+    def long(self):
+        return {
+            'g_id': self.g_id,
+            'g_name': self.g_name,
+            'number_of_members': self.number_of_members
+        }
 
     def insert(self):
         db.session.add(self)
@@ -48,12 +56,14 @@ class User(db.Model):
     #auth_id = Column(String(80), nullable=False)
     name = Column(String(80), nullable=False)
     last_checked = Column(Integer)
+    groups = Column(String(180))
 
     def long(self):
         return {
             'user_id': self.user_id,
             'name': self.name,
-            'last_checked': self.last_checked
+            'last_checked': self.last_checked,
+            'groups': self.groups
         }
 
     def insert(self):
@@ -78,8 +88,9 @@ class Task(db.Model):
     category = Column(String(80), default = "daily")
     streaks = Column(Integer, nullable=False, default=0)
     shared = Column(Boolean, nullable=False, default=False)
-    group_id = Column(Integer, db.ForeignKey('Group.g_id'))
     user_id = Column(Integer, db.ForeignKey('User.user_id'))
+    group_id = Column(Integer, db.ForeignKey('Group.g_id'))
+    number_completed = Column(Integer, default=0)
     
     # Relationship
     #group = db.relationship("Group", backref="tasks", lazy=True)
@@ -91,7 +102,8 @@ class Task(db.Model):
             'name': self.name,
             'complete': self.complete,
             'streaks': self.streaks,
-            'user_id': self.user_id
+            'user_id': self.user_id,
+            'number_completed': self.number_completed
         }
 
     # Long form representation?
@@ -106,7 +118,8 @@ class Task(db.Model):
             'streaks': self.streaks,
             'shared': self.shared,
             'group_id': self.group_id,
-            'user_id': self.user_id
+            'user_id': self.user_id,
+            'number_completed': self.number_completed
         }
 
     def insert(self):

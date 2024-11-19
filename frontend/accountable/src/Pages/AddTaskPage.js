@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-function AddTaskPage() {
+function AddTaskPage({filter}) {
     const daysOfTheWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     const [activeDay, setActiveDay] = useState([false, false, false, false, false, false, false]);
     const [name, setName] = useState("");
     const [frequency, setFrequency] = useState(0);
-    const [shared, setShared] = useState(false);
+    //const [shared, setShared] = useState(false);
+    const [groupId, setGroupId] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -29,7 +30,7 @@ function AddTaskPage() {
                 setName(task.name);
                 setFrequency(task.frequency);
                 setActiveDay(days);
-                setShared(task.shared);
+                //setShared(task.shared);
             })
             .catch(error => {
                 console.error('There was an error fetching the data:', error);
@@ -59,7 +60,9 @@ function AddTaskPage() {
             "name": name,
             "frequency": frequency,
             "days": days,
-            "shared": false
+            "shared": filter != 0,
+            "group_id": filter,
+            "user_id": 1
         }
 
         if (editOption){
@@ -88,7 +91,7 @@ function AddTaskPage() {
         <div>
             <button type="button" onClick={goToTaskPage}>Back</button>
 
-            <form action="/submit" method="POST" onSubmit={handleSubmit}>
+            <form className='task-form' action="/submit" method="POST" onSubmit={handleSubmit}>
                 <label>Name:</label>
                 <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required/>
 
@@ -106,10 +109,11 @@ function AddTaskPage() {
                     </button>
                 ))}
 
+                {/*
                 <label> Shared: </label>
-                <input type="checkbox" value="no"/>
+                <input type="checkbox" value="no"/>*/}
 
-                <button type="submit" onClick={handleSubmit}>Submit</button>
+                <button className="submit" type="submit" onClick={handleSubmit}>Submit</button>
             </form>
         </div>
     );

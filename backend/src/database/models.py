@@ -27,6 +27,7 @@ class Group(db.Model):
     g_id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     g_name = Column(String(80), nullable=False)
     number_of_members = Column(Integer(), default=0)
+    owner = Column(String(80), nullable=False)
 
     # Relationship
     tasks = db.relationship("Task", backref="group", lazy=True)
@@ -35,7 +36,8 @@ class Group(db.Model):
         return {
             'g_id': self.g_id,
             'g_name': self.g_name,
-            'number_of_members': self.number_of_members
+            'number_of_members': self.number_of_members,
+            'owner': self.owner
         }
 
     def insert(self):
@@ -52,7 +54,8 @@ class Group(db.Model):
 class User(db.Model):
     __tablename__ = 'User'
     
-    user_id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
+    user_id = Column(String(80), primary_key=True)
+    email = Column(String(80), nullable=False)
     #auth_id = Column(String(80), nullable=False)
     name = Column(String(80), nullable=False)
     last_checked = Column(Integer)
@@ -62,6 +65,7 @@ class User(db.Model):
         return {
             'user_id': self.user_id,
             'name': self.name,
+            'email': self.email,
             'last_checked': self.last_checked,
             'groups': self.groups
         }
@@ -91,6 +95,7 @@ class Task(db.Model):
     user_id = Column(Integer, db.ForeignKey('User.user_id'))
     group_id = Column(Integer, db.ForeignKey('Group.g_id'))
     number_completed = Column(Integer, default=0)
+    members_completion = Column(String(180))
     
     # Relationship
     #group = db.relationship("Group", backref="tasks", lazy=True)
@@ -119,7 +124,8 @@ class Task(db.Model):
             'shared': self.shared,
             'group_id': self.group_id,
             'user_id': self.user_id,
-            'number_completed': self.number_completed
+            'number_completed': self.number_completed,
+            'members_completion': self.members_completion
         }
 
     def insert(self):

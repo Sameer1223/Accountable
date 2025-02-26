@@ -2,15 +2,19 @@ import './AddTaskPage.css';
 
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useAxios } from '../AxiosInstance';
 
 function AddTaskPage({filter}) {
+    const axiosInstance = useAxios();
+
     const daysOfTheWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     const [activeDay, setActiveDay] = useState([false, false, false, false, false, false, false]);
     const [name, setName] = useState("");
     const [frequency, setFrequency] = useState(0);
     //const [shared, setShared] = useState(false);
     const [groupId, setGroupId] = useState(0);
+    const { user, isAuthenticated, isLoading } = useAuth0();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -18,8 +22,8 @@ function AddTaskPage({filter}) {
     const editOption = Boolean(taskId);
 
     useEffect(() => {
-        if (editOption) {
-            axios.get(`/tasks/${taskId}`)
+        if (isAuthenticated && axiosInstance && editOption) {
+            axiosInstance.get(`/tasks/${taskId}`)
             .then(response => {
                 let task = response.data.task;
                 let days = Array(7).fill(false);
@@ -36,7 +40,7 @@ function AddTaskPage({filter}) {
                 console.error('There was an error fetching the data:', error);
             });
         }
-    }, [taskId, editOption])
+    }, [taskId, editOption, isAuthenticated, axiosInstance])
 
     const toggleDay = (index) => {
         setActiveDay((prev) => 
@@ -56,17 +60,20 @@ function AddTaskPage({filter}) {
             day? days += index.toString() : ''
         );
 
+        // Sanitize user id
+        const user_id = user.sub.split('|')[1].toString();
+
         const data = {
             "name": name,
             "frequency": frequency,
             "days": days,
             "shared": filter != 0,
             "group_id": filter,
-            "user_id": 1
+            "user_id": user_id
         }
 
         if (editOption){
-            axios.patch(`/tasks/${taskId}`, data)
+            axiosInstance.patch(`/tasks/${taskId}`, data)
             .then(response => {
                 console.log('Task data', response.data);
                 navigate('/');
@@ -75,7 +82,7 @@ function AddTaskPage({filter}) {
                 console.error('There was an error fetching the data:', error);
             });
         } else {
-            axios.post('/tasks', data)
+            axiosInstance.post('/tasks', data)
             .then(response => {
                 console.log('Task data', response.data);
                 navigate('/');

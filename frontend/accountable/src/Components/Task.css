@@ -1,7 +1,16 @@
-.task {
+ .task {
     display:flex;
     align-items: center;
     gap: 10px;
+    border-top: 1px solid #fcfcfc;
+    color: white;
+    background-color: #1f202a;
+    margin-bottom: 3px;
+    justify-content: space-between;
+}
+
+.task:hover{
+    background-color: #fcfcfc;
 }
 
 .task-name {
@@ -9,14 +18,29 @@
     align-items: center;
     width: 150px;
     margin-right: 20px;
+    margin-left: 15px;
+}
+
+.checkbox {
+    margin-right: 15px;
+}
+
+.end-elements {
+    display: flex;
+    width: 30%;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .edit-btn, .delete-btn{
     display: flex;
     width: 20px;
     height: 20px;
-    border-radius: 7px;
-    background-color: azure;
-    align-items: center;
-    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.edit-btn:hover, .delete-btn:hover{
+    background-color: #cfcfcf;
 }

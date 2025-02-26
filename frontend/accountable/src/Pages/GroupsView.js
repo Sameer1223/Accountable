@@ -1,43 +1,99 @@
 import './GroupsView.css';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Group from '../Components/Group.js';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
+import { useAxios } from '../AxiosInstance.js';
+import Login from '../Components/Login.js';
 
-function GroupsView({ setFilter }) {  
+function GroupsView({ setFilter }) {
+    const axiosInstance = useAxios();
+
     const [groups, setGroups] = useState([]);
+    const [groupName, setGroupName] = useState('');
+    const [adding, setAdding] = useState(false);
+    const { user, isAuthenticated, isLoading } = useAuth0();
+    const navigate = useNavigate();
 
     const getUserGroups = async () => {
-        let temp = [];
-        // Get users groups
-        axios.get(`/users/${1}`)
-        .then(response => {
+        try {
+            // Sanitize user id
+            const user_id = user.sub.split('|')[1].toString();
+            
+            const response = await axiosInstance.get(`/users/${user_id}`);
+            const groups = response.data.user.groups;
+        
+            if (!groups) {
+                return;
+            }
+        
             let groupIds = response.data.user.groups.split(',');
-            groupIds.map((id) => {
-                axios.get(`/groups/${id}`)
-                .then(response => {
-                    temp.push([id, response.data.group.g_name]);
-                    setGroups(temp);
-                })
-                .catch(error => {
-                    console.error('There was an error fetching the data:', error);
-                });
+            
+            const requests = groupIds.map((id) => axiosInstance.get(`/groups/${id}`));
+        
+            // Step 3: Wait for all requests to complete
+            const responses = await Promise.all(requests);
+        
+            // Step 4: Extract and store group data
+            const fetchedData = responses.map((response) => [
+                response.data.group.g_id,
+                response.data.group.g_name,
+                response.data.group.number_of_members
+            ]);
+            setGroups(fetchedData); // Update state with the fetched data
+        } catch (error) {
+            console.error("There was an error fetching the data:", error);
+        }
+    }
+
+    const createGroup = async (e) => {
+        e.preventDefault();
+
+        // Sanitize user id
+        const user_id = user.sub.split('|')[1].toString();
+
+        const data = {
+            "name": groupName,
+            "owner": user_id
+        }
+
+        axiosInstance.post(`/groups`, data)
+        .then(response => {
+            axiosInstance.patch(`/users/${user_id}/groups/${response.data.group.g_id}`)
+            .then(response => {
+                console.log('Group added');
+                setAdding(false);
+                navigate('/');
             })
         })
         .catch(error => {
-            console.error('There was an error fetching the data:', error);
+            console.error('There was an error creating the group:', error);
         });
-    }
+    };
 
     useEffect(() => {
-        getUserGroups();
-    }, []);
+        if (isAuthenticated && axiosInstance){
+            getUserGroups();
+        }
+    }, [adding, isAuthenticated, axiosInstance]);
     
     return (
         <div className='groups-view'>
-            <Group id={0} group="Individual" setFilter={setFilter}/>
-            {groups.map((group, index) => (
-                <Group key={index} id={group[0]} group={group[1]} setFilter={setFilter}/>
-            ))}
+            <Login/>
+            {isAuthenticated && (
+                <>
+                    <Group id={0} group="Individual" setFilter={setFilter}/>
+                    {groups.map((group, index) => (
+                        <Group key={index} id={group[0]} group={group[1]} count={group[2]} setFilter={setFilter}/>
+                    ))}
+                    {adding && 
+                    <div>
+                        <input type="text" id="name" onChange={(e) => setGroupName(e.target.value)} required/>
+                        <button onClick={createGroup}>Add</button>
+                    </div>}
+                    <button className="add-group-button" onClick={() => setAdding(true)}>+</button>
+                </>
+            )}
         </div>
     );
 }

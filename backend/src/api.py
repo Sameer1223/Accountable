@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
 import json
 from flask_cors import CORS
+from auth.auth import AuthError, requires_auth
 
 from database.models import db_drop_and_create_all, setup_db, Task, Group, User
 #from .auth.auth import AuthError, requires_auth
@@ -34,7 +35,8 @@ def hello():
 # Users
 # ========================
 @app.route('/users', methods=['GET'])
-def users():
+@requires_auth(permission='get:users')
+def users(jwt):
     # Retrieve all users
     users = User.query.all()
     formatted_users = [user.long() for user in users]
@@ -43,7 +45,7 @@ def users():
         'users': formatted_users
         }), 200
 
-@app.route('/users/<int:user_id>', methods=['GET'])
+@app.route('/users/<string:user_id>', methods=['GET'])
 def get_user_by_id(user_id):
     try:
         user = User.query.filter(User.user_id==user_id).one_or_none()
@@ -54,16 +56,36 @@ def get_user_by_id(user_id):
     except:
         abort(422)
 
+# Questionable route
+@app.route('/users-by-email/<string:email>', methods=['GET'])
+def get_user_by_email(email):
+    try:
+        user = User.query.filter(User.email==email).one_or_none()
+        return jsonify({
+            'success': True,
+            'user': user.long()
+            }), 200
+    except:
+        abort(422)
+
 @app.route('/users', methods=['POST'])
 def insert_user():
     body = request.get_json()
+    user_id = body.get('user_id')
     name = body.get('name')
+    email = body.get('email')
 
     if not name:
         abort(400)
     
+    user = User.query.filter(User.user_id == user_id).one_or_none()
+    if user is not None:
+        return jsonify({
+            'user': [user.long()]
+        }), 200
+    
     try:
-        user = User(name=name)
+        user = User(user_id=user_id, name=name, email=email)
         user.insert()
         return jsonify({
             'success': True,
@@ -72,7 +94,7 @@ def insert_user():
     except:
         abort(422)
 
-@app.route('/users/<int:user_id>', methods=['PATCH'])
+@app.route('/users/<string:user_id>', methods=['PATCH'])
 def update_user(user_id):
     try:
         user = User.query.filter(User.user_id==user_id).one_or_none()
@@ -97,13 +119,17 @@ def update_user(user_id):
 # User groups
 # ========================  
 
-@app.route('/users/<int:user_id>/groups/<int:group_id>', methods=['PATCH'])
-def add_user_group(user_id, group_id):
+@app.route('/users/<string:user_id>/groups/<int:group_id>', methods=['PATCH'])
+@requires_auth(permission='patch:add-user-to-group')
+def add_user_group(jwt, user_id, group_id):
     try:
+        if group_id == 0:
+            return
+        
         user = User.query.filter(User.user_id==user_id).one_or_none()
 
         past = ""
-        if user.groups is not None:
+        if user.groups is not None and user.groups != '':
             past = user.groups + ","
         
         user.groups = past + str(group_id)
@@ -120,14 +146,15 @@ def add_user_group(user_id, group_id):
     except:
         abort(422)
 
-@app.route('/users/<int:user_id>/groups/<int:group_id>', methods=['DELETE'])
-def delete_user_group(user_id, group_id):
+@app.route('/users/<string:user_id>/groups/<int:group_id>', methods=['DELETE'])
+@requires_auth(permission='delete:user-group')
+def delete_user_group(jwt, user_id, group_id):
     try:
         user = User.query.filter(User.user_id==user_id).one_or_none()
 
         groups = user.groups.split(',')
         groups.remove(str(group_id))
-        user.groups = groups.join(',')
+        user.groups = ','.join(groups)
         user.update()
 
         group = Group.query.filter(Group.g_id==group_id).one_or_none()
@@ -145,7 +172,8 @@ def delete_user_group(user_id, group_id):
 # ========================
 # Route for testing
 @app.route('/tasks', methods=['GET'])
-def tasks():
+@requires_auth(permission='get:tasks')
+def tasks(jwt):
     # Retrieve all tasks
     tasks = Task.query.all()
     formatted_tasks = [task.long() for task in tasks]
@@ -163,16 +191,20 @@ def getTaskById(id):
         'task': task.long()
     }), 200
 
-@app.route('/tasks-today/<int:user_id>', methods=['GET'])
-def tasks_today(user_id):
+@app.route('/tasks-today/<string:user_id>', methods=['GET'])
+@requires_auth(permission='get:tasks-today')
+def tasks_today(jwt, user_id):
     # Retrieve tasks schedule for today
     # Get todays day
     now = datetime.datetime.now()
     day_of_the_week = now.weekday()
 
-    group_id = request.args.get('group_id', 0)
+    group_id = request.args.get('group_id', '0')
+    if group_id == '0':
+        tasks = Task.query.filter(Task.user_id == user_id, Task.group_id==group_id, Task.days.contains(day_of_the_week)).all()
+    else:
+        tasks = Task.query.filter(Task.group_id == group_id, Task.days.contains(day_of_the_week)).all()
 
-    tasks = Task.query.filter(Task.user_id == user_id, Task.group_id == group_id, Task.days.contains(day_of_the_week)).all()
     formatted_tasks = [task.long() for task in tasks]
     return jsonify({
         'success:': True,
@@ -180,7 +212,8 @@ def tasks_today(user_id):
         }), 200
 
 @app.route('/tasks', methods=['POST'])
-def create_task():
+@requires_auth(permission='post:tasks')
+def create_task(jwt):
     # Post a new task
     body = request.get_json()
     name = body.get('name')
@@ -216,7 +249,7 @@ def create_task():
 
 # Resets streaks for incompleted tasks and 
 # resets completion state of completed tasks
-@app.route('/update-streaks/<int:user_id>', methods=['PATCH'])
+@app.route('/update-streaks/<string:user_id>', methods=['PATCH'])
 def update_streaks(user_id):
     try:
         user = User.query.filter(User.user_id == user_id).one_or_none()
@@ -247,7 +280,8 @@ def update_streaks(user_id):
         abort(422)
 
 @app.route('/tasks/<int:id>', methods=['PATCH'])
-def update_task(id):
+@requires_auth(permission='patch:tasks')
+def update_task(jwt, id):
     try:
         body = request.get_json()
 
@@ -264,6 +298,7 @@ def update_task(id):
         task.shared = body.get('shared', task.shared)
         task.group_id = body.get('group_id', task.group_id)
         task.number_completed = body.get('number_completed', task.number_completed)
+        task.members_completion = body.get('members_completion', task.members_completion)
 
         task.update()
         return jsonify({
@@ -274,7 +309,8 @@ def update_task(id):
         abort(422)
 
 @app.route('/tasks/<int:id>', methods=['DELETE'])
-def delete_task(id):
+@requires_auth(permission='delete:tasks')
+def delete_task(jwt, id):
     try:
         task = Task.query.filter(Task.id==id).one_or_none()
         if task is None:
@@ -292,7 +328,8 @@ def delete_task(id):
 # ========================
 # For debugging
 @app.route('/groups', methods=['GET'])
-def groups():
+@requires_auth(permission='get:groups')
+def groups(jwt):
     # Retrieve all groups
     groups = Group.query.all()
     formatted_groups = [group.long() for group in groups]
@@ -302,8 +339,10 @@ def groups():
         }), 200
 
 @app.route('/groups/<int:g_id>', methods=['GET'])
-def group_by_id(g_id):
+@requires_auth(permission='get:group-by-id')
+def group_by_id(jwt, g_id):
     # Retrieve group by id
+    print("GID:", g_id, flush=True)
     group = Group.query.filter(Group.g_id==g_id).one_or_none()
     if group is None:
         abort(404)
@@ -313,14 +352,16 @@ def group_by_id(g_id):
         }), 200
 
 @app.route('/groups', methods=['POST'])
-def insert_group():
+@requires_auth(permission='post:groups')
+def insert_group(jwt):
     body = request.get_json()
     name = body.get('name')
-    if not name:
+    owner = body.get('owner')
+    if not name or not owner:
         abort(400)
     
     try:
-        group = Group(g_name=name)
+        group = Group(g_name=name, owner=owner)
         group.insert()
         return jsonify({
             'success': True,

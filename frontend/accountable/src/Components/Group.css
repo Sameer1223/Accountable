@@ -1,0 +1,21 @@
+.group-name-button {
+    width: 100%;
+    margin: 5px 0px;
+    padding: 10px 0px;
+    border: none;
+    background-color: #1f202a;
+    display: flex;
+    justify-content: space-between;
+}
+
+.group-name {
+    color: white;
+    font-weight: 400;
+    font-family: 'Courier New', monospace;
+}
+
+.group-count {
+    color: white;
+    font-family: 'Courier New', monospace;
+    margin-right: 10px;
+}

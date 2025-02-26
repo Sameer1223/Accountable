@@ -1,3 +1,32 @@
+.TaskPage {
+    height: 100%;
+    flex-grow: 1;
+    padding: 20px;
+}
+
 .add-btn {
-    background-color: aquamarine;
+    margin-top: 5px;
+    background-color: #669bbc;
+    border: none;
+    border-radius: 50%;
+    padding: 5px 10px;
+}
+
+.group-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
+
+.invite-button, .leave-button {
+    margin-right: 5px;
+    background-color: #669bbc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.task:nth-last-child(1){
+    border-bottom: 1px solid #fcfcfc;
 }

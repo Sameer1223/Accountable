@@ -1,5 +1,11 @@
 .groups-view {
-    margin-right: 50px;
+    height: 100vh;
+    width: 280px;
     padding: 10px;
     border-right: '10px solid black';
+    background-color: #1f202a;
+}
+
+.add-group-button {
+    margin-top: 5px;
 }

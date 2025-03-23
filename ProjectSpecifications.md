@@ -45,10 +45,17 @@
 4. Progress bar
 5. ~~Categories based on daily, weekly, important? Might not be needed because tasks only show on days~~
 6. Edit option for tasks
-
 7. Reset streaks if missed -> last checked, then for all past days missed reset tasks to incomplete and set streaks to 0 if not completed
 8. Individual and Group tab section
 9. CRUD for groups
 10. User login page
 11. User authentication
 12. User auth
+
+### Updated To Do:
+1. CSS Styling
+2. Users should be able to accept or decline group invites
+3. Group admin should be able to manage members
+4. Clicking on a task should expand stats and reveal member completion stats
+5. Right clicking a task should allow for popup to edit and delete
+6. User experience upgrades

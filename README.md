@@ -9,6 +9,7 @@ Users can:
 - Can mark tasks as complete increasing the streak if everyone has completed the task
 - Track their daily progress towards completing their goals alongside their friends
 - Switch between their friend groups to access other shared tasks
+- Tasks only show on the days they are assigned
 
 ### Tech Stack
 - Python and Flask for the backend

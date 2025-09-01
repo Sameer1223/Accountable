@@ -5,6 +5,7 @@ from jose import jwt
 from urllib.request import urlopen
 import os
 
+# @TODO: Uncomment, move sensitive info to .env
 #load_dotenv()
 
 AUTH0_DOMAIN = 'dev-s266brdcm0m6zmt1.us.auth0.com'
@@ -56,7 +57,7 @@ def check_permissions(permission, payload):
 
 
 def verify_decode_jwt(token):
-    # NOTE: Code from the provided Udacity workspace
+    # NOTE: Code from the provided Udacity authorization boilerplate
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     # GET THE DATA IN THE HEADER
@@ -80,7 +81,7 @@ def verify_decode_jwt(token):
                 'e': key['e']
             }
     
-    # Finally, verify!!!
+    # Verify key
     if rsa_key:
         try:
             # USE THE KEY TO VALIDATE THE JWT
@@ -115,6 +116,7 @@ def verify_decode_jwt(token):
                 'description': 'Unable to find the appropriate key.'
             }, 400)
 
+# Auth wrapper, uses RBAC from Auth0
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)

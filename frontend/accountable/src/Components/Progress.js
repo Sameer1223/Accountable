@@ -7,7 +7,7 @@ function Progress(props) {
     let total = props.total;
         
     return (
-        <div>
+        <div className='progress'>
             <div className='progress-container'>
                 <div className='progress-bar' style={{width: `${checked / total * 100}%`}}></div>
             </div>

@@ -7,15 +7,14 @@ from flask_cors import CORS
 from auth.auth import AuthError, requires_auth
 
 from database.models import db_drop_and_create_all, setup_db, Task, Group, User
-#from .auth.auth import AuthError, requires_auth
 
 
 app = Flask(__name__)
 setup_db(app)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-#with app.app_context():
-#    db_drop_and_create_all()
+with app.app_context():
+    db_drop_and_create_all()
 
 # Endpoints
 
@@ -167,6 +166,7 @@ def delete_user_group(jwt, user_id, group_id):
             }), 200
     except:
         abort(422)
+
 # ========================
 # Tasks
 # ========================
@@ -383,21 +383,7 @@ def unprocessable(error):
     }), 422
 
 
-'''
-@Done implement error handlers using the @app.errorhandler(error) decorator
-    each error handler should return (with approprate messages):
-             jsonify({
-                    "success": False,
-                    "error": 404,
-                    "message": "resource not found"
-                    }), 404
 
-'''
-
-'''
-@Done implement error handler for 404
-    error handler should conform to general task above
-'''
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
@@ -406,11 +392,8 @@ def not_found(error):
         "message": "not found"
     }), 404
 
-'''
-@Done implement error handler for AuthError
-    error handler should conform to general task above
-'''
-#@app.errorhandler(AuthError)
+
+@app.errorhandler(AuthError)
 def authorization_error(error):
     return jsonify({
         "success": False,

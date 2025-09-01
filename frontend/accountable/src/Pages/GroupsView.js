@@ -31,10 +31,10 @@ function GroupsView({ setFilter }) {
             
             const requests = groupIds.map((id) => axiosInstance.get(`/groups/${id}`));
         
-            // Step 3: Wait for all requests to complete
+            // Wait for all requests to complete
             const responses = await Promise.all(requests);
         
-            // Step 4: Extract and store group data
+            // Extract and store group data
             const fetchedData = responses.map((response) => [
                 response.data.group.g_id,
                 response.data.group.g_name,

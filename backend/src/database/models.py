@@ -3,6 +3,7 @@ from sqlalchemy import Column, String, Integer, Boolean
 from flask_sqlalchemy import SQLAlchemy
 import json
 
+# Sensitive information, @TODO: move to env variable or .env file
 database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))
 database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))

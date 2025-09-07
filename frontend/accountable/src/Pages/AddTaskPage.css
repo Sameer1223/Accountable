@@ -2,10 +2,50 @@
     background-color: aquamarine;
 }
 
+h2 {
+    color: white;
+    margin-left: 25px;
+    margin-top: 20px;
+}
+
 .task-form {
     display: flex;
+    flex-direction: column;
+    color: white;
+    margin-left: 25px;
+    margin-top: 20px;
+}
+
+#name {
+    width: 20%;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+#frequency {
+    width: 5%;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.days {
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.task-form  button {
+    flex-direction: row;
+    width: 3%;
 }
 
 .submit {
-    margin-left: 10px;
+    width: 7%;
+    padding: 4px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
 }

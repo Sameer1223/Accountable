@@ -95,9 +95,10 @@ function AddTaskPage({filter}) {
     };
         
     return (
-        <div>
+        <div className="add-task">
             <button type="button" onClick={goToTaskPage}>Back</button>
 
+            <h2>{editOption? 'Edit Task' : 'Add Task'}</h2>
             <form className='task-form' action="/submit" method="POST" onSubmit={handleSubmit}>
                 <label>Name:</label>
                 <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required/>
@@ -106,16 +107,17 @@ function AddTaskPage({filter}) {
                 <input type="number" id="frequency" value={frequency} onChange={(e) => setFrequency(e.target.value)} min="1" max="10" required/>
 
                 <label>Days:</label>
-                {activeDay.map((isActive, index) => (
-                    <button 
-                        type="button" 
-                        key={index} 
-                        className={`${isActive? 'active' : ''}`} 
-                        onClick={() => toggleDay(index)}>
-                        {daysOfTheWeek[index]}   
-                    </button>
-                ))}
-
+                <div className="days">
+                    {activeDay.map((isActive, index) => (
+                        <button 
+                            type="button" 
+                            key={index} 
+                            className={`${isActive? 'active' : ''}`} 
+                            onClick={() => toggleDay(index)}>
+                            {daysOfTheWeek[index]}   
+                        </button>
+                    ))}
+                </div>
                 {/*
                 <label> Shared: </label>
                 <input type="checkbox" value="no"/>*/}

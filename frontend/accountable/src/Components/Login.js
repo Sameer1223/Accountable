@@ -7,7 +7,7 @@ function Login() {
 
     const handleLogin = () => {
         if (!isAuthenticated){
-            //navigate('/login');
+            navigate('/login');
             loginWithRedirect();
         } else {
             logout({logoutParams: {returnTo: window.location.origin }})

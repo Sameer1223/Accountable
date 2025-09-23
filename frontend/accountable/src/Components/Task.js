@@ -1,15 +1,14 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import './Task.css';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { axiosInstance, useAxios } from '../AxiosInstance';
+import { useAxios } from '../AxiosInstance';
 
 function Task(props) {
     let task = props.task;
     let getTasks = props.getTasks;
     let groupCount = props.groupCount;
 
-    const { user, isAuthenticated, isLoading } = useAuth0();
+    const { user } = useAuth0();
     const axiosInstance = useAxios();
 
     const handleDelete = async (id) => {
@@ -43,9 +42,9 @@ function Task(props) {
 
     const updateStreaks = () => {
         let streaks = task.streaks;
-        if (!inCompletion() && task.number_completed + 1 == groupCount){
+        if (!inCompletion() && task.number_completed + 1 === groupCount){
             streaks = task.streaks + 1;
-        } else if (inCompletion() && task.number_completed == groupCount) {
+        } else if (inCompletion() && task.number_completed === groupCount) {
             streaks = task.streaks - 1;
         }
         return streaks;
@@ -66,7 +65,7 @@ function Task(props) {
         }
         let members_completion = task.members_completion.split(',');
         let arr = members_completion.filter(id => id !== user.sub.split('|')[1].toString());
-        if (arr.join(',') == '') return null;
+        if (arr.join(',') === '') return null;
         return arr.join(",");
     }
 

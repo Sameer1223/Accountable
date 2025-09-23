@@ -1,6 +1,4 @@
 import './Progress.css';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 
 function Progress(props) {
     let checked = props.checked;

@@ -13,8 +13,8 @@ function AddTaskPage({filter}) {
     const [name, setName] = useState("");
     const [frequency, setFrequency] = useState(0);
     //const [shared, setShared] = useState(false);
-    const [groupId, setGroupId] = useState(0);
-    const { user, isAuthenticated, isLoading } = useAuth0();
+    //const [groupId, setGroupId] = useState(0);
+    const { user, isAuthenticated } = useAuth0();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -67,7 +67,7 @@ function AddTaskPage({filter}) {
             "name": name,
             "frequency": frequency,
             "days": days,
-            "shared": filter != 0,
+            "shared": filter !== 0,
             "group_id": filter,
             "user_id": user_id
         }

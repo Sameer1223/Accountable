@@ -7,14 +7,14 @@ import AddTaskPage from './Pages/AddTaskPage';
 import GroupsView from './Pages/GroupsView';
 import { useState } from 'react';
 import AddUser from './Components/AddUser';
-import Login from './Components/Login';
+//import Login from './Components/Login';
 
 const domain = "dev-s266brdcm0m6zmt1.us.auth0.com";
 const clientId = "gcE3WcsOMGd4rw8iVGpciqavOYBswzyF";
 
 function App() {
   const [filter, setFilter] = useState(0);
-  const { isAuthenticated } = useAuth0();
+  //const { isAuthenticated } = useAuth0();
 
   return (
     <Auth0Provider

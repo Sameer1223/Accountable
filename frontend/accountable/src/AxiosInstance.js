@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 export const useAxios = () => {
     const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
-    const[token, setToken] = useState('');
+    //const[token, setToken] = useState('');
     const [axiosInstance, setAxiosInstance] = useState(null);
 
 
@@ -28,7 +28,7 @@ export const useAxios = () => {
                 setAxiosInstance(null);
             })
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, getAccessTokenSilently])
 
     return axiosInstance? axiosInstance.instance : null;
 };

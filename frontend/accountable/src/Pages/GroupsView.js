@@ -12,7 +12,7 @@ function GroupsView({ setFilter }) {
     const [groups, setGroups] = useState([]);
     const [groupName, setGroupName] = useState('');
     const [adding, setAdding] = useState(false);
-    const { user, isAuthenticated, isLoading } = useAuth0();
+    const { user, isAuthenticated } = useAuth0();
     const navigate = useNavigate();
 
     const getUserGroups = async () => {
@@ -75,7 +75,7 @@ function GroupsView({ setFilter }) {
         if (isAuthenticated && axiosInstance){
             getUserGroups();
         }
-    }, [adding, isAuthenticated, axiosInstance]);
+    }, [adding, isAuthenticated, axiosInstance, getUserGroups]);
     
     return (
         <div className='groups-view'>

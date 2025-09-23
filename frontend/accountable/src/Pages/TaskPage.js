@@ -144,7 +144,7 @@ function TaskPage({ filter }) {
             getTasks();
             getGroupInfo(filter);
         }
-    }, [filter, isAuthenticated, axiosInstance]);
+    }, [filter, isAuthenticated, axiosInstance, getGroupInfo, getTasks, lastChecked, updateLastChecked]);
 
     return (
         isAuthenticated && (

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
-from ..database.models import User
-from ..auth.auth import requires_auth
+from database.models import User
+from auth.auth import requires_auth
 import datetime
 
 users_endpoints = Blueprint('users', __name__)

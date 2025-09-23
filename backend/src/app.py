@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from .database.models import db_drop_and_create_all, setup_db
+from database.models import db_drop_and_create_all, setup_db
 
 
 app = Flask(__name__)
@@ -11,10 +11,10 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 #    db_drop_and_create_all()
 
 # Register blueprints
-from .routes.groups import group_endpoints
-from .routes.tasks import tasks_endpoints
-from .routes.user_groups import user_groups_endpoints
-from .routes.users import users_endpoints
+from routes.groups import group_endpoints
+from routes.tasks import tasks_endpoints
+from routes.user_groups import user_groups_endpoints
+from routes.users import users_endpoints
 
 app.register_blueprint(group_endpoints)
 app.register_blueprint(tasks_endpoints)

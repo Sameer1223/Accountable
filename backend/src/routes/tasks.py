@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
-from ..database.models import Task, User
-from ..auth.auth import requires_auth
+from database.models import Task, User
+from auth.auth import requires_auth
 import datetime
 
 tasks_endpoints = Blueprint('tasks', __name__)

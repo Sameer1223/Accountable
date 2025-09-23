@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
-from ..database.models import Group
-from ..auth.auth import requires_auth
+from database.models import Group
+from auth.auth import requires_auth
 
 group_endpoints = Blueprint('groups', __name__)
 

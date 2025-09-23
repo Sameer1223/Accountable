@@ -3,3 +3,4 @@ backend/src/database/__pycache__/*
 backend/src/models/__pycache__/*
 backend/src/auth/__pycache__/*
 backend/src/routes/__pycache__/*
+/backend/src/accountableEnv

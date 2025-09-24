@@ -13,11 +13,9 @@ origins = [
 
 CORS(app, origins=origins)
 
-@app.cli.command('db_init')
-def db_init():
-    with app.app_context():
-        db_drop_and_create_all()
-        print("Database initialized.")
+with app.app_context():
+    db_drop_and_create_all()
+    print("Database initialized.")
 
 # Register blueprints
 from routes.groups import group_endpoints

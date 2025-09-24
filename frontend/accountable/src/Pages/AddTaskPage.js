@@ -68,7 +68,7 @@ function AddTaskPage({filter}) {
             "frequency": parseInt(frequency, 10),
             "days": days,
             "shared": filter !== 0,
-            "user_id": user_id
+            "user_id": user_id,
             "group_id": filter || 0
         }
 

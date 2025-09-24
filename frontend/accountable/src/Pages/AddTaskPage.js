@@ -69,7 +69,7 @@ function AddTaskPage({filter}) {
             "days": days,
             "shared": filter !== 0,
             "user_id": user_id,
-            "group_id": filter || 0
+            "group_id": filter
         }
 
         if (editOption){

@@ -20,7 +20,7 @@ export const useAxios = () => {
                         Accept: 'application/json'
                     }
                 });
-                instance.defaults.headers.Authorization = `Bearer ${token}`;
+                instance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
                 setAxiosInstance({instance});
             })
             .catch(error => {

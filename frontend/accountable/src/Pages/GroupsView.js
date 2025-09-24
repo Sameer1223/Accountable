@@ -1,5 +1,5 @@
 import './GroupsView.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Group from '../Components/Group.js';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,7 @@ function GroupsView({ setFilter }) {
     const { user, isAuthenticated } = useAuth0();
     const navigate = useNavigate();
 
-    const getUserGroups = async () => {
+    const getUserGroups = useCallback(async () => {
         try {
             // Sanitize user id
             const user_id = user.sub.split('|')[1].toString();
@@ -44,7 +44,7 @@ function GroupsView({ setFilter }) {
         } catch (error) {
             console.error("There was an error fetching the data:", error);
         }
-    }
+    }, [axiosInstance, user, setGroups]);
 
     const createGroup = async (e) => {
         e.preventDefault();

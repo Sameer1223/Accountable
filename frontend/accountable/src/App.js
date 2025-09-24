@@ -1,7 +1,7 @@
 //import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import { Auth0Provider } from '@auth0/auth0-react';
 import TaskPage from './Pages/TaskPage';
 import AddTaskPage from './Pages/AddTaskPage';
 import GroupsView from './Pages/GroupsView';

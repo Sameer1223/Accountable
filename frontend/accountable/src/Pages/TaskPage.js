@@ -1,6 +1,6 @@
 import './TaskPage.css';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from 'react';
 import Task from '../Components/Task.js';
 import Progress from '../Components/Progress.js';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -23,7 +23,7 @@ function TaskPage({ filter }) {
       navigate('/add');
     };
 
-    const updateLastChecked = async() => {
+    const updateLastChecked = useCallback(async() => {
         // Sanitize user id
         const user_id = user.sub.split('|')[1].toString();
 
@@ -61,9 +61,9 @@ function TaskPage({ filter }) {
         .catch(error => {
             console.error('There was an error fetching the data:', error);
         });
-    }
+    }, [axiosInstance, user, setLastChecked]);
 
-    const getTasks = async () => {
+    const getTasks = useCallback(async () => {
         // Sanitize user id
         const user_id = user.sub.split('|')[1].toString();
         
@@ -75,9 +75,9 @@ function TaskPage({ filter }) {
         .catch(error => {
             console.error('There was an error fetching the data:', error);
         });
-    }
+    }, [axiosInstance, user, filter, setTasks]);
 
-    const getGroupInfo = async(filter) => {
+    const getGroupInfo = useCallback(async() => {
         if (filter === 0){
             setGroupCount(1);
             return;
@@ -94,7 +94,7 @@ function TaskPage({ filter }) {
         .catch(error => {
             console.error('There was an error fetching the data:', error);
         });
-    }
+    }, [axiosInstance, user, filter, setGroupCount, setIsOwner]);
 
     const addUserToGroup = async (e) => {
         e.preventDefault();

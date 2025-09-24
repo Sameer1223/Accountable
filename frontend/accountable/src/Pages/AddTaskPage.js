@@ -65,11 +65,14 @@ function AddTaskPage({filter}) {
 
         const data = {
             "name": name,
-            "frequency": frequency,
+            "frequency": parseInt(frequency, 10),
             "days": days,
             "shared": filter !== 0,
-            "group_id": filter,
             "user_id": user_id
+        }
+
+        if (filter !== 0){
+            data.group_id = filter;
         }
 
         if (editOption){

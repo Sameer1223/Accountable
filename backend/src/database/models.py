@@ -95,7 +95,7 @@ class Task(db.Model):
     category = Column(String(80), default = "daily")
     streaks = Column(Integer, nullable=False, default=0)
     shared = Column(Boolean, nullable=False, default=False)
-    user_id = Column(Integer, db.ForeignKey('User.user_id'))
+    user_id = Column(String(80), db.ForeignKey('User.user_id'))
     group_id = Column(Integer, db.ForeignKey('Group.g_id'))
     number_completed = Column(Integer, default=0)
     members_completion = Column(String(180))

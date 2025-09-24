@@ -33,7 +33,9 @@ def get_token_auth_header():
         }, 401)
     
     header = request.headers['Authorization']
-    headerWords = header.split(' ')
+    print("RAW AUTH HEADER:", repr(header))  # 👈 debug
+    headerWords = header.split()
+    print("HEADER WORDS:", headerWords)  
     if len(headerWords) != 2 or headerWords[0].lower() != 'bearer':
         raise AuthError({
             'code': 'invalid_header',

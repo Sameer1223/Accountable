@@ -5,7 +5,13 @@ from database.models import db_drop_and_create_all, setup_db
 
 app = Flask(__name__)
 setup_db(app)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+origins = [
+    "http://localhost:3000",  # React development server
+    "https://accountableweb.netlify.app", # Deployed React app
+]
+
+CORS(app, origins=origins)
 
 #with app.app_context():
 #    db_drop_and_create_all()

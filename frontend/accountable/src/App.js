@@ -21,7 +21,7 @@ function App() {
     domain={domain}
     clientId={clientId}
     authorizationParams={{
-      redirect_uri: 'http://localhost:3000',
+      redirect_uri: 'https://accountableweb.netlify.app',
       audience: 'accountable'
     }}>
       <Router>

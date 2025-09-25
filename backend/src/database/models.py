@@ -23,6 +23,11 @@ def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
 
+    # Seed the default group
+    individual = Group(g_id=0, g_name="Individual", owner="system")
+    db.session.add(individual)
+    db.session.commit()
+
 
 class Group(db.Model):
     __tablename__ = "Group"
@@ -96,7 +101,7 @@ class Task(db.Model):
     streaks = Column(Integer, nullable=False, default=0)
     shared = Column(Boolean, nullable=False, default=False)
     user_id = Column(String(80), db.ForeignKey('User.user_id'))
-    group_id = Column(Integer, nullable=False, default=0)
+    group_id = Column(Integer, db.ForeignKey('Group.g_id'), default=0)
     number_completed = Column(Integer, default=0)
     members_completion = Column(String(180))
     

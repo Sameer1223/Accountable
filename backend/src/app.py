@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from database.models import db_drop_and_create_all, setup_db
+from errors import register_error_handlers
 
 
 app = Flask(__name__)
@@ -25,6 +26,8 @@ app.register_blueprint(group_endpoints)
 app.register_blueprint(tasks_endpoints)
 app.register_blueprint(user_groups_endpoints)
 app.register_blueprint(users_endpoints)
+
+register_error_handlers(app)
 
 # TEST ROUTE
 @app.route('/hello')

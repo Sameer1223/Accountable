@@ -25,10 +25,11 @@ def tasks(jwt):
 @tasks_endpoints.route('/tasks/<int:id>', methods=['GET'])
 def getTaskById(id):
     task = Task.query.filter(Task.id == id).one_or_none()
-    return jsonify({
-        'success': True,
-        'task': task.long()
-    }), 200
+    if task is None:
+        abort(404)
+    return jsonify({ 
+        'success': True, 
+        'task': task.long() }), 200
 
 # Get tasks scheduled for today for a specific user
 # This is the endpoint a user will interact with the most

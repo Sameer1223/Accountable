@@ -5,12 +5,9 @@ from jose import jwt
 from urllib.request import urlopen
 import os
 
-# @TODO: Uncomment, move sensitive info to .env
-#load_dotenv()
-
-AUTH0_DOMAIN = 'dev-s266brdcm0m6zmt1.us.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'accountable'
+AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
+ALGORITHMS = os.environ.get('ALGORITHMS', 'RS256')
+API_AUDIENCE = os.environ.get('API_AUDIENCE')
 
 ## AuthError Exception
 '''

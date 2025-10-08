@@ -16,6 +16,8 @@ https://accountable-fzw9.onrender.com
 
 
 Project Dependencies are in the backend/src/ folder in the requirements.txt file
+For env variables run:
+>source authVariables.sh
 
 BUT you can just access the full app hosted on render on the link above. Frontend is hosted on Netlify and backend on Render. Authentication can be done through the login button on arrival to the page. You can use the Auth0 portal to login and then perform tasks.
 
